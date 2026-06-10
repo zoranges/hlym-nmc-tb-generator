@@ -1,0 +1,29 @@
+# Generated output
+poc/output/
+
+# Excel temp files
+~$*.xlsx
+~$*.xls
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+*.log
+
+# macOS
+.DS_Store
+
+# Claude config (local only)
+.claude/
+
+# Temp directories
+tmp/
