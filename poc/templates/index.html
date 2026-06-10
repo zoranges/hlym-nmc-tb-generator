@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HLYM NMC — TB Auto Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sidebar-w: 240px;
+    --gray-50:  #fafafa;
+    --gray-75:  #f5f5f4;
+    --gray-100: #f0f0ee;
+    --gray-200: #e6e5e3;
+    --gray-300: #d6d5d1;
+    --gray-400: #a8a6a0;
+    --gray-500: #787670;
+    --gray-600: #5c5a55;
+    --gray-700: #44423e;
+    --gray-800: #2d2c28;
+    --gray-900: #1b1a17;
+    --blue-50:  #eff6ff;
+    --blue-100: #dbeafe;
+    --blue-500: #3b82f6;
+    --blue-600: #2563eb;
+    --blue-700: #1d4ed8;
+    --green-50: #f0fdf4;
+    --green-500: #22c55e;
+    --green-600: #16a34a;
+    --green-700: #15803d;
+    --amber-50: #fffbeb;
+    --amber-500: #f59e0b;
+    --amber-600: #d97706;
+    --red-50: #fef2f2;
+    --red-500: #ef4444;
+    --violet-50: #f5f3ff;
+    --violet-500: #8b5cf6;
+    --violet-600: #7c3aed;
+    --teal-50: #f0fdfa;
+    --teal-500: #14b8a6;
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 14px;
+    --shadow-xs: 0 1px 2px rgba(0,0,0,.04);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow: 0 4px 6px -1px rgba(0,0,0,.05), 0 2px 4px -2px rgba(0,0,0,.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.06), 0 4px 6px -4px rgba(0,0,0,.05);
+    --transition: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    display: flex;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--gray-900);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .sidebar-header {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar-logo .icon-box {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--blue-500), var(--violet-500));
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+  .sidebar-logo .title {
+    font-size: .88rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -.01em;
+  }
+  .sidebar-logo .sub {
+    font-size: .68rem;
+    font-weight: 400;
+    color: rgba(255,255,255,.4);
+  }
+
+  .sidebar-nav { padding: 12px 10px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: none;
+    color: rgba(255,255,255,.55);
+    font-size: .84rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+  }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,.06); }
+  .nav-item.active {
+    color: #fff;
+    background: rgba(255,255,255,.1);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+  }
+  .nav-item .nav-icon {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .nav-item:nth-child(1) .nav-icon { background: rgba(59,130,246,.25); color: #93c5fd; }
+  .nav-item:nth-child(2) .nav-icon { background: rgba(139,92,246,.25); color: #c4b5fd; }
+  .nav-item:nth-child(3) .nav-icon { background: rgba(20,184,166,.25); color: #5eead4; }
+  .nav-badge {
+    margin-left: auto;
+    font-size: .64rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+    color: rgba(255,255,255,.5);
+  }
+  .nav-item.active .nav-badge { background: rgba(255,255,255,.18); color: rgba(255,255,255,.8); }
+
+  .sidebar-footer {
+    padding: 14px 20px;
+    border-top: 1px solid rgba(255,255,255,.06);
+    font-size: .7rem;
+    color: rgba(255,255,255,.25);
+  }
+
+  /* ── Main ── */
+  .main { margin-left: var(--sidebar-w); flex: 1; padding: 32px 36px; max-width: calc(100vw - var(--sidebar-w)); }
+
+  /* ── Page header ── */
+  .page-header { margin-bottom: 28px; }
+  .page-header h2 { font-size: 1.45rem; font-weight: 700; letter-spacing: -.02em; }
+  .page-header p { font-size: .84rem; color: var(--gray-500); margin-top: 4px; }
+
+  /* ── Panel ── */
+  .tab-panel { display: none; animation: fadeSlide .25s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .card-header h3 { font-size: .82rem; font-weight: 600; letter-spacing: -.01em; color: var(--gray-700); }
+  .card-body { padding: 20px; }
+
+  /* ── Controls ── */
+  .controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: .7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--gray-500);
+  }
+  .field input[type="text"] {
+    padding: 9px 13px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    font-size: .86rem;
+    font-family: inherit;
+    color: var(--gray-800);
+    background: #fff;
+    outline: none;
+    transition: border var(--transition), box-shadow var(--transition);
+    width: 140px;
+  }
+  .field input[type="text"]:focus {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+  }
+  .field input[type="text"]:first-of-type { width: 240px; }
+
+  /* File upload — custom */
+  .file-upload-wrap {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+  }
+  .file-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 15px;
+    border: 1px dashed var(--gray-300);
+    border-radius: var(--radius-sm);
+    font-size: .84rem;
+    font-weight: 500;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    background: var(--gray-50);
+  }
+  .file-label:hover { border-color: var(--blue-500); color: var(--blue-600); background: var(--blue-50); }
+  .file-label.has-file { border-style: solid; border-color: var(--green-500); color: var(--green-700); background: var(--green-50); }
+  .file-label svg { width: 16px; height: 16px; opacity: .6; }
+  .file-input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+  .file-name { font-size: .78rem; color: var(--gray-600); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-left: 8px; align-self: center; }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: .84rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    letter-spacing: -.01em;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--gray-900);
+    color: #fff;
+    box-shadow: var(--shadow-xs);
+  }
+  .btn-primary:hover { background: #000; box-shadow: var(--shadow-sm); }
+  .btn-primary:active { transform: scale(.98); }
+  .btn-primary:disabled { opacity: .4; pointer-events: none; }
+
+  .btn-secondary {
+    background: #fff;
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+  }
+  .btn-secondary:hover { background: var(--gray-75); border-color: var(--gray-400); }
+  .btn-secondary:disabled { opacity: .4; pointer-events: none; }
+
+  .btn-dl {
+    background: var(--green-600);
+    color: #fff;
+  }
+  .btn-dl:hover { background: var(--green-700); }
+
+  /* Generation progress */
+  .btn .spin-ring {
+    width: 15px; height: 15px;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .55s linear infinite;
+    display: none;
+  }
+  .btn.loading .spin-ring { display: block; }
+  .btn.loading .btn-label { opacity: .7; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Stats ── */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-card .stat-val { font-size: 1.6rem; font-weight: 800; letter-spacing: -.03em; color: var(--gray-900); line-height: 1; }
+  .stat-card .stat-lbl { font-size: .7rem; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; color: var(--gray-400); }
+  .stat-card.accent-blue .stat-val { color: var(--blue-600); }
+  .stat-card.accent-green .stat-val { color: var(--green-600); }
+  .stat-card.accent-amber .stat-val { color: var(--amber-600); }
+  .stat-card.accent-violet .stat-val { color: var(--violet-600); }
+
+  /* ── Table ── */
+  .table-shell { overflow: hidden; }
+  .table-scroll { overflow-x: auto; max-height: 520px; overflow-y: auto; }
+  .table-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+  .table-scroll::-webkit-scrollbar-track { background: transparent; }
+  .table-scroll::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+  thead { position: sticky; top: 0; z-index: 2; }
+  th {
+    background: var(--gray-75);
+    color: var(--gray-500);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--gray-100);
+    white-space: nowrap;
+    color: var(--gray-700);
+  }
+  tbody tr { transition: background .1s; }
+  tbody tr:hover td { background: var(--gray-50); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  .badge-ex { background: var(--gray-100); color: var(--gray-600); }
+  .badge-new { background: var(--amber-50); color: var(--amber-600); }
+
+  /* ── Logs ── */
+  .log-list { font-size: .8rem; }
+  .log-item {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--gray-100);
+    align-items: flex-start;
+  }
+  .log-item:last-child { border-bottom: none; }
+  .log-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gray-300);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .log-item.step-ok .log-dot { background: var(--green-500); }
+  .log-item.step-warn .log-dot { background: var(--amber-500); }
+  .log-msg { color: var(--gray-600); line-height: 1.5; }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--gray-400);
+  }
+  .empty-state .empty-icon { font-size: 2.4rem; margin-bottom: 12px; opacity: .5; }
+  .empty-state p { font-size: .84rem; font-weight: 500; }
+
+  /* ── Error ── */
+  .error-banner {
+    background: var(--red-50);
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    font-size: .82rem;
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+
+  /* ── Toast ── */
+  .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+  .toast {
+    background: var(--gray-900);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: var(--radius-sm);
+    font-size: .82rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    animation: slideIn .25s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.error { background: #991b1b; }
+  .toast.success { background: #14532d; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .sidebar { width: 60px; }
+    .sidebar .title, .sidebar .sub, .sidebar .nav-item span:not(.nav-icon), .sidebar .nav-badge, .sidebar-footer { display: none; }
+    .sidebar-logo { justify-content: center; }
+    .sidebar-nav { padding: 8px 6px; }
+    .nav-item { justify-content: center; padding: 10px; }
+    .main { margin-left: 60px; max-width: calc(100vw - 60px); padding: 20px; }
+    :root { --sidebar-w: 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- Sidebar -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="icon-box">T</div>
+      <div>
+        <div class="title">TB Generator</div>
+        <div class="sub">HLYM NMC</div>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-tab="ymc">
+      <span class="nav-icon">A</span>
+      <span>YMC Section A</span>
+      <span class="nav-badge">YMC</span>
+    </button>
+    <button class="nav-item" data-tab="ymac">
+      <span class="nav-icon">B</span>
+      <span>YMAC Section B</span>
+      <span class="nav-badge">YMAC</span>
+    </button>
+    <button class="nav-item" data-tab="lcp">
+      <span class="nav-icon">C</span>
+      <span>LCP / VMI</span>
+      <span class="nav-badge">VMI</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">POC v2 &middot; 2026</div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- Main Content -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toasts"></div>
+
+  <!-- ─── YMC ─── -->
+  <div class="tab-panel active" id="panel-ymc">
+    <div class="page-header">
+      <h2>Section A &mdash; YMC</h2>
+      <p>Generate Technical Bulletin rows for YMC parts (CU_FA = A2).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Configuration</h3></div>
+      <div class="card-body">
+        <div class="controls">
+          <div class="field">
+            <label>Data Source</label>
+            <div class="file-upload-wrap">
+              <label class="file-label" id="ymc-file-label" for="ymc-file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Choose file
+              </label>
+              <input type="file" class="file-input" id="ymc-file" accept=".xlsx" onchange="onFileChange('ymc')">
+              <span class="file-name" id="ymc-file-name"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label>TB No.</label>
+            <input type="text" id="ymc-tb-no" value="TB-25-137">
+          </div>
+          <div class="field">
+            <label>Factory</label>
+            <input type="text" id="ymc-factory" value="F3">
+          </div>
+          <button class="btn btn-primary" id="ymc-generate" onclick="generate('ymc')">
+            <span class="spin-ring"></span>
+            <span class="btn-label">Generate</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="ymc-stats"></div>
+    <div class="card table-shell" id="ymc-table-card" style="display:none">
+      <div class="card-header">
+        <h3>Generated Rows</h3>
+        <button class="btn btn-dl btn-sm" id="ymc-dl" disabled onclick="downloadFile('ymc')">Export .xlsx</button>
+      </div>
+      <div class="table-scroll"><table id="ymc-table"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="card" id="ymc-logs-card" style="display:none">
+      <div class="card-header"><h3>Processing Log</h3></div>
+      <div class="card-body"><div class="log-list" id="ymc-logs"></div></div>
+    </div>
+    <div id="ymc-error"></div>
+  </div>
+
+  <!-- ─── YMAC ─── -->
+  <div class="tab-panel" id="panel-ymac">
+    <div class="page-header">
+      <h2>Section B &mdash; YMAC</h2>
+      <p>Generate TB rows for YMAC parts (CU_FA = A3 / A4 / A5 / A7).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Configuration</h3></div>
+      <div class="card-body">
+        <div class="controls">
+          <div class="field">
+            <label>Data Source</label>
+            <div class="file-upload-wrap">
+              <label class="file-label" id="ymac-file-label" for="ymac-file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Choose file
+              </label>
+              <input type="file" class="file-input" id="ymac-file" accept=".xlsx" onchange="onFileChange('ymac')">
+              <span class="file-name" id="ymac-file-name"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label>TB No.</label>
+            <input type="text" id="ymac-tb-no" value="TB-25-137">
+          </div>
+          <div class="field">
+            <label>Factory</label>
+            <input type="text" id="ymac-factory" value="F3">
+          </div>
+          <button class="btn btn-primary" id="ymac-generate" onclick="generate('ymac')">
+            <span class="spin-ring"></span>
+            <span class="btn-label">Generate</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="ymac-stats"></div>
+    <div class="card table-shell" id="ymac-table-card" style="display:none">
+      <div class="card-header">
+        <h3>Generated Rows</h3>
+        <button class="btn btn-dl btn-sm" id="ymac-dl" disabled onclick="downloadFile('ymac')">Export .xlsx</button>
+      </div>
+      <div class="table-scroll"><table id="ymac-table"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="card" id="ymac-logs-card" style="display:none">
+      <div class="card-header"><h3>Processing Log</h3></div>
+      <div class="card-body"><div class="log-list" id="ymac-logs"></div></div>
+    </div>
+    <div id="ymac-error"></div>
+  </div>
+
+  <!-- ─── LCP ─── -->
+  <div class="tab-panel" id="panel-lcp">
+    <div class="page-header">
+      <h2>Section C &mdash; LCP / VMI</h2>
+      <p>Generate TB rows for VMI parts from QCPS Sub Assy processes.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Configuration</h3></div>
+      <div class="card-body">
+        <div class="controls">
+          <div class="field">
+            <label>Data Source</label>
+            <div class="file-upload-wrap">
+              <label class="file-label" id="lcp-file-label" for="lcp-file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Choose file
+              </label>
+              <input type="file" class="file-input" id="lcp-file" accept=".xlsx" onchange="onFileChange('lcp')">
+              <span class="file-name" id="lcp-file-name"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label>TB No.</label>
+            <input type="text" id="lcp-tb-no" value="TB-25-137">
+          </div>
+          <div class="field">
+            <label>Factory</label>
+            <input type="text" id="lcp-factory" value="F3">
+          </div>
+          <button class="btn btn-primary" id="lcp-generate" onclick="generate('lcp')">
+            <span class="spin-ring"></span>
+            <span class="btn-label">Generate</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="lcp-stats"></div>
+    <div class="card table-shell" id="lcp-table-card" style="display:none">
+      <div class="card-header">
+        <h3>Generated Rows</h3>
+        <button class="btn btn-dl btn-sm" id="lcp-dl" disabled onclick="downloadFile('lcp')">Export .xlsx</button>
+      </div>
+      <div class="table-scroll"><table id="lcp-table"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="card" id="lcp-logs-card" style="display:none">
+      <div class="card-header"><h3>Processing Log</h3></div>
+      <div class="card-body"><div class="log-list" id="lcp-logs"></div></div>
+    </div>
+    <div id="lcp-error"></div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════════════════
+const COLUMNS = ['No.', 'SEC', 'LVL1', 'LVL2', 'LVL3', 'LVL4', 'PART NO.', 'PART NAME', 'QTY/BIKE', 'SUPPLIER', 'USE IN', 'EX/NEW', 'REMARKS'];
+let downloadUrls = {};
+const generating = {};
+
+// ═══════════════════════════════════════════════════════════════════
+// Navigation
+// ═══════════════════════════════════════════════════════════════════
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// File input
+// ═══════════════════════════════════════════════════════════════════
+function onFileChange(section) {
+  const input = document.getElementById(section + '-file');
+  const label = document.getElementById(section + '-file-label');
+  const nameEl = document.getElementById(section + '-file-name');
+  if (input.files.length > 0) {
+    label.classList.add('has-file');
+    nameEl.textContent = input.files[0].name;
+  } else {
+    label.classList.remove('has-file');
+    nameEl.textContent = '';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Toast
+// ═══════════════════════════════════════════════════════════════════
+function toast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || '');
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Table builder
+// ═══════════════════════════════════════════════════════════════════
+function buildTable(tableId, rows) {
+  const thead = document.querySelector('#' + tableId + ' thead');
+  const tbody = document.querySelector('#' + tableId + ' tbody');
+  thead.innerHTML = '<tr>' + COLUMNS.map(c => '<th>' + c + '</th>').join('') + '</tr>';
+  tbody.innerHTML = rows.map(r => {
+    let exCell;
+    if (r.ex_new === 'EX') exCell = '<span class="badge badge-ex">EX</span>';
+    else if (r.ex_new === 'NEW') exCell = '<span class="badge badge-new">NEW</span>';
+    else exCell = r.ex_new || '';
+    return '<tr>' + [
+      td(r.no), td(r.sec), td(r.lvl1), td(r.lvl2), td(r.lvl3), td(r.lvl4),
+      td(r.part_no), td(r.part_name), td(r.qty), td(r.supplier), td(r.use_in),
+      '<td>' + exCell + '</td>',
+      td(r.remarks)
+    ].join('') + '</tr>';
+  }).join('');
+}
+function td(v) { return '<td>' + esc(v || '') + '</td>'; }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+// ═══════════════════════════════════════════════════════════════════
+// Stats builder
+// ═══════════════════════════════════════════════════════════════════
+function buildStats(section, stats) {
+  const div = document.getElementById(section + '-stats');
+  let cards = '';
+  if (section === 'ymc') {
+    cards += statCard(stats.total, 'Total Rows', 'blue');
+    cards += statCard(stats.ex, 'EX Parts', 'green');
+    cards += statCard(stats.new, 'NEW Parts', 'amber');
+    cards += statCard(stats.model || '?', 'Model', 'violet');
+  } else if (section === 'ymac') {
+    cards += statCard(stats.total, 'Total Rows', 'blue');
+    cards += statCard(stats.f3, 'USE IN F3', 'green');
+    cards += statCard(stats.vendor, 'USE IN Vendor', 'amber');
+    cards += statCard(stats.model || '?', 'Model', 'violet');
+  } else if (section === 'lcp') {
+    cards += statCard(stats.total, 'Total Rows', 'blue');
+    cards += statCard(stats.groups, 'VMI Groups', 'green');
+    cards += statCard(stats.color_groups || 0, 'Color Groups', 'amber');
+    cards += statCard(stats.model || '?', 'Model', 'violet');
+  }
+  div.innerHTML = '<div class="stats-row">' + cards + '</div>';
+}
+
+function statCard(val, label, accent) {
+  return '<div class="stat-card accent-' + accent + '"><div class="stat-val">' + esc(String(val)) + '</div><div class="stat-lbl">' + esc(label) + '</div></div>';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Logs builder
+// ═══════════════════════════════════════════════════════════════════
+function buildLogs(section, logs) {
+  const div = document.getElementById(section + '-logs');
+  if (!logs || logs.length === 0) {
+    div.innerHTML = '<div class="empty-state"><div class="empty-icon">&mdash;</div><p>No log entries</p></div>';
+    return;
+  }
+  div.innerHTML = logs.map(l => {
+    let cls = 'log-item';
+    if (String(l).toLowerCase().includes('error') || String(l).toLowerCase().includes('fail')) cls += ' step-warn';
+    else cls += ' step-ok';
+    return '<div class="' + cls + '"><div class="log-dot"></div><div class="log-msg">' + esc(l) + '</div></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Generate
+// ═══════════════════════════════════════════════════════════════════
+async function generate(section) {
+  if (generating[section]) return;
+  generating[section] = true;
+
+  const btn = document.getElementById(section + '-generate');
+  const errorDiv = document.getElementById(section + '-error');
+  const tableCard = document.getElementById(section + '-table-card');
+  const logsCard = document.getElementById(section + '-logs-card');
+  const dlBtn = document.getElementById(section + '-dl');
+
+  errorDiv.innerHTML = '';
+  tableCard.style.display = 'none';
+  logsCard.style.display = 'none';
+  dlBtn.disabled = true;
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const form = new FormData();
+    const fileInput = document.getElementById(section + '-file');
+    if (fileInput.files.length > 0) {
+      form.append('file', fileInput.files[0]);
+    }
+    form.append('tb_no', document.getElementById(section + '-tb-no').value || 'TB-25-137');
+    form.append('target_factory', document.getElementById(section + '-factory').value || 'F3');
+
+    const resp = await fetch('/api/generate/' + section, { method: 'POST', body: form });
+    const data = await resp.json();
+
+    if (!resp.ok || data.error) {
+      errorDiv.innerHTML = '<div class="error-banner"><strong>Error:</strong> ' + esc(data.error) + '\n\n' + esc(data.trace || '') + '</div>';
+      toast('Generation failed: ' + data.error, 'error');
+      return;
+    }
+
+    if (data.success) {
+      buildTable(section + '-table', data.rows);
+      buildStats(section, data.stats);
+      buildLogs(section, data.logs);
+      tableCard.style.display = '';
+      logsCard.style.display = '';
+      if (data.download_url) {
+        downloadUrls[section] = data.download_url;
+        dlBtn.disabled = false;
+      }
+      toast('Generated ' + data.stats.total + ' rows successfully.', 'success');
+    }
+  } catch (err) {
+    errorDiv.innerHTML = '<div class="error-banner">' + esc(String(err)) + '</div>';
+    toast('Network error: ' + String(err), 'error');
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    generating[section] = false;
+  }
+}
+
+function downloadFile(section) {
+  const url = downloadUrls[section];
+  if (url) window.open(url, '_blank');
+}
+</script>
+</body>
+</html>
